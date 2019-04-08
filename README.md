@@ -1,8 +1,10 @@
 # rust-notifica
 
-Small, cross-platform Rust crate for sending system notifications.
+Small, cross-platform Rust crate for sending system notifications
 
 ## API
+
+[API Documentation](https://docs.rs/notifica/1.0.0/notifica/)
 
 ```rust
 notifica::notify("<message title>", "<message body>");
