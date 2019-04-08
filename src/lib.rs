@@ -10,7 +10,7 @@ extern crate winrt;
 trait Platform {
     fn setup() -> Self;
     fn notify(msg_title: &str, msg_body: &str);
-    fn teardown(&mut self);
+    fn teardown(self);
 }
 
 #[cfg(target_os = "windows")]
@@ -67,7 +67,7 @@ impl Platform for Windows {
         }
     }
 
-    fn teardown(&mut self) {
+    fn teardown(self) {
         self.0.uninit();
     }
 }
@@ -87,7 +87,7 @@ impl Platform for MacOs {
         mac_notification_sys::send_notification(msg_title, &None, msg_body, &None).unwrap();
     }
 
-    fn teardown(&mut self) {}
+    fn teardown(self) {}
 }
 
 #[cfg(target_os = "linux")]
@@ -107,7 +107,7 @@ impl Platform for Linux {
             .unwrap();
     }
 
-    fn teardown(&mut self) {}
+    fn teardown(self) {}
 }
 
 #[cfg(target_os = "windows")]
@@ -118,7 +118,7 @@ type CurrPlatform = MacOs;
 type CurrPlatform = Linux;
 
 pub fn notify(msg_title: &str, msg_body: &str) {
-    let mut p = CurrPlatform::setup();
+    let p = CurrPlatform::setup();
     CurrPlatform::notify(msg_title, msg_body);
     p.teardown();
 }
