@@ -1,6 +1,6 @@
 [package]
 name = "notifica"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Corey Farwell <coreyf@rwell.org>"]
 edition = "2018"
 license = "MIT/Apache-2.0"
