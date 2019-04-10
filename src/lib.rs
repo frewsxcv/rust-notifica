@@ -28,10 +28,12 @@ impl Platform for Windows {
         use winrt::*;
         let toast_xml =
             ToastNotificationManager::get_template_content(ToastTemplateType::ToastText02)
-                .unwrap().unwrap();
+                .unwrap()
+                .unwrap();
         let toast_text_elements = toast_xml
             .get_elements_by_tag_name(&FastHString::new("text"))
-            .unwrap().unwrap();
+            .unwrap()
+            .unwrap();
 
         toast_text_elements
             .item(0)
