@@ -2,7 +2,7 @@
 extern crate mac_notification_sys;
 
 #[cfg(target_os = "macos")]
-use mac_notification_sys::error::{ApplicationError, NorificationError};
+use mac_notification_sys::error::{ApplicationError, NotificationError};
 
 #[cfg(target_os = "linux")]
 extern crate notify_rust;
@@ -42,7 +42,7 @@ impl StdError for Error {}
 #[cfg(target_os = "macos")]
 enum MacOsError {
     AppErr(ApplicationError),
-    NotErr(NorificationError),
+    NotErr(NotificationError),
 }
 
 impl Display for Error {
