@@ -24,7 +24,6 @@ use std::{
 trait Platform {
     fn setup() -> Self;
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error>;
-    fn teardown(self);
 }
 
 #[derive(Debug)]
@@ -136,8 +135,11 @@ impl Platform for Windows {
         .show(&*toast)?;
         Ok(())
     }
+}
 
-    fn teardown(self) {
+#[cfg(target_os = "windows")]
+impl Drop for Windows {
+    fn drop(self) {
         self.0.uninit();
     }
 }
@@ -156,8 +158,6 @@ impl Platform for MacOs {
         mac_notification_sys::set_application(&bundle)?;
         mac_notification_sys::send_notification(msg_title, &None, msg_body, &None)?;
     }
-
-    fn teardown(self) {}
 }
 
 #[cfg(target_os = "linux")]
@@ -176,8 +176,6 @@ impl Platform for Linux {
             .show()?;
         Ok(())
     }
-
-    fn teardown(self) {}
 }
 
 #[cfg(target_os = "windows")]
@@ -190,5 +188,4 @@ type CurrPlatform = Linux;
 pub fn notify(msg_title: &str, msg_body: &str) {
     let p = CurrPlatform::setup();
     CurrPlatform::notify(msg_title, msg_body);
-    p.teardown();
 }
