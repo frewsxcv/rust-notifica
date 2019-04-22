@@ -1,5 +1,6 @@
 language: rust
 cache: cargo
+dist: xenial
 addons:
   packages:
     - libdbus-1-dev
