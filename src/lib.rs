@@ -26,7 +26,6 @@ trait Platform {
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error>;
 }
 
-#[derive(Debug)]
 enum Error {
     #[cfg(target_os = "linux")]
     Linux(LError),
@@ -50,9 +49,9 @@ impl Display for Error {
             #[cfg(target_os = "linux")]
             Error::Linux(e) => write!(fmt, "{}", e),
             #[cfg(target_os = "macos")]
-            Error::MacOs => write!(fmt, "MacOs Error"),
+            Error::MacOs(e) => write!(fmt, "{}", e),
             #[cfg(target_os = "windows")]
-            Error::Windows => write!(fmt, "Windows Error"),
+            Error::Windows => write!(fmt, "{}", e),
         }
     }
 }
@@ -154,9 +153,10 @@ impl Platform for MacOs {
     }
 
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
-        let bundle = mac_notification_sys::get_bundle_identifier("Script Editor")?;
-        mac_notification_sys::set_application(&bundle)?;
-        mac_notification_sys::send_notification(msg_title, &None, msg_body, &None)?;
+        let bundle = mac_notification_sys::get_bundle_identifier("Script Editor").unwrap();
+        mac_notification_sys::set_application(&bundle).unwrap();
+        mac_notification_sys::send_notification(msg_title, &None, msg_body, &None).unwrap();
+        Ok(())
     }
 }
 
