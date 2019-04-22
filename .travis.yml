@@ -3,7 +3,7 @@ cache: cargo
 dist: xenial
 addons:
   packages:
-    - libdbus-1-dev
+    - libdbus-glib-1-dev
 os:
   - osx
   - linux
