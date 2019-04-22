@@ -26,6 +26,7 @@ trait Platform {
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error>;
 }
 
+#[derive(Debug)]
 enum Error {
     #[cfg(target_os = "linux")]
     Linux(LError),
