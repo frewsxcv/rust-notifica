@@ -198,6 +198,6 @@ type CurrPlatform = MacOs;
 type CurrPlatform = Linux;
 
 pub fn notify(msg_title: &str, msg_body: &str) {
-    let p = CurrPlatform::setup();
+    CurrPlatform::setup();
     CurrPlatform::notify(msg_title, msg_body);
 }
