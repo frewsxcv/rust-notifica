@@ -63,7 +63,7 @@ impl Display for Error {
             #[cfg(target_os = "macos")]
             Error::MacOs(e) => write!(fmt, "{}", e),
             #[cfg(target_os = "windows")]
-            Error::Windows => write!(fmt, "{}", e),
+            Error::Windows(e) => write!(fmt, "{:?}", e),
         }
     }
 }
