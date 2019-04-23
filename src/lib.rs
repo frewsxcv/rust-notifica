@@ -39,9 +39,20 @@ enum Error {
 impl StdError for Error {}
 
 #[cfg(target_os = "macos")]
+#[derive(Debug)]
 enum MacOsError {
     AppErr(ApplicationError),
     NotErr(NotificationError),
+}
+
+#[cfg(target_os = "macos")]
+impl Display for MacOsError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            MacOsError::AppErr(e) => Display::fmt(e, f),
+            MacOsError::NotErr(e) => Display::fmt(e, f),
+        }
+    }
 }
 
 impl Display for Error {
