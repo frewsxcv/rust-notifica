@@ -150,7 +150,7 @@ impl Platform for Windows {
 
 #[cfg(target_os = "windows")]
 impl Drop for Windows {
-    fn drop(&mut self) {
+    fn drop(self) {
         self.0.uninit();
     }
 }
