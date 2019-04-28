@@ -111,12 +111,12 @@ impl From<WError> for Error {
 }
 
 #[cfg(target_os = "windows")]
-struct Windows(winrt::RuntimeContext);
+struct Windows(Option<winrt::RuntimeContext>);
 
 #[cfg(target_os = "windows")]
 impl Platform for Windows {
     fn setup() -> Self {
-        Windows(winrt::RuntimeContext::init())
+        Windows(Some(winrt::RuntimeContext::init()))
     }
 
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
@@ -150,8 +150,10 @@ impl Platform for Windows {
 
 #[cfg(target_os = "windows")]
 impl Drop for Windows {
-    fn drop(self) {
-        self.0.uninit();
+    fn drop(&mut self) {
+        if let Some(runtime_context) = self.0.take() {
+            runtime_context.uninit();
+        }
     }
 }
 
