@@ -124,25 +124,25 @@ impl Platform for Windows {
         use winrt::windows::ui::notifications::*;
         use winrt::*;
         let toast_xml =
-            ToastNotificationManager::get_template_content(ToastTemplateType::ToastText02)??;
+            ToastNotificationManager::get_template_content(ToastTemplateType::ToastText02)?.unwrap();
         let toast_text_elements =
-            toast_xml.get_elements_by_tag_name(&FastHString::new("text"))??;
+            toast_xml.get_elements_by_tag_name(&FastHString::new("text"))?.unwrap();
 
-        toast_text_elements.item(0)??.append_child(
+        toast_text_elements.item(0)?.unwrap().append_child(
             &*toast_xml
-                .create_text_node(&FastHString::from(msg_title))??
-                .query_interface::<IXmlNode>()?,
+                .create_text_node(&FastHString::from(msg_title))?.unwrap()
+                .query_interface::<IXmlNode>().unwrap(),
         )?;
-        toast_text_elements.item(1)??.append_child(
+        toast_text_elements.item(1)?.unwrap().append_child(
             &*toast_xml
-                .create_text_node(&FastHString::from(msg_body))??
-                .query_interface::<IXmlNode>()?,
+                .create_text_node(&FastHString::from(msg_body))?.unwrap()
+                .query_interface::<IXmlNode>().unwrap(),
         )?;
 
         let toast = ToastNotification::create_toast_notification(&*toast_xml)?;
         ToastNotificationManager::create_toast_notifier_with_id(&FastHString::new(
             "{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\\WindowsPowerShell\\v1.0\\powershell.exe",
-        ))??
+        ))?.unwrap()
         .show(&*toast)?;
         Ok(())
     }
