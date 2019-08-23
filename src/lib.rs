@@ -197,7 +197,7 @@ type CurrPlatform = MacOs;
 #[cfg(target_os = "linux")]
 type CurrPlatform = Linux;
 
-pub fn notify(msg_title: &str, msg_body: &str) -> Result<(), Box<StdError>> {
+pub fn notify(msg_title: &str, msg_body: &str) -> Result<(), Box<dyn StdError>> {
     CurrPlatform::setup();
     CurrPlatform::notify(msg_title, msg_body)?;
     Ok(())
