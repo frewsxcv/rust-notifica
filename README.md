@@ -18,6 +18,10 @@ notifica::notify("Hello", "World! 🌍");
 
 ![](https://i.imgur.com/vuQHhxp.png)
 
+## Similar libraries
+
+- [notify-rust](https://github.com/hoodie/notify-rust)
+
 ## License
 
 Licensed under either of
