@@ -11,9 +11,6 @@ extern crate notify_rust;
 use notify_rust::error::Error as LError;
 
 #[cfg(target_os = "windows")]
-extern crate winrt;
-
-#[cfg(target_os = "windows")]
 use winrt::Error as WError;
 
 use std::{
@@ -111,12 +108,12 @@ impl From<WError> for Error {
 }
 
 #[cfg(target_os = "windows")]
-struct Windows(Option<winrt::RuntimeContext>);
+struct Windows;
 
 #[cfg(target_os = "windows")]
 impl Platform for Windows {
     fn setup() -> Self {
-        Windows(Some(winrt::RuntimeContext::init()))
+        Windows
     }
 
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
@@ -143,17 +140,8 @@ impl Platform for Windows {
         ToastNotificationManager::create_toast_notifier_with_id(&FastHString::new(
             "{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\\WindowsPowerShell\\v1.0\\powershell.exe",
         ))?.unwrap()
-        .show(&*toast)?;
+            .show(&*toast)?;
         Ok(())
-    }
-}
-
-#[cfg(target_os = "windows")]
-impl Drop for Windows {
-    fn drop(&mut self) {
-        if let Some(runtime_context) = self.0.take() {
-            runtime_context.uninit();
-        }
     }
 }
 
