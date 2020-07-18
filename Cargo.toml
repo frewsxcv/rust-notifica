@@ -8,7 +8,7 @@ repository = "https://github.com/frewsxcv/rust-notifica"
 description = "Small, cross-platform Rust crate for sending system notifications"
 
 [target.'cfg(target_os = "macos")'.dependencies]
-mac-notification-sys = "0.2.0"
+mac-notification-sys = "0.3.0"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 notify-rust = "3.3"
