@@ -20,11 +20,14 @@ use std::{
 
 trait Platform {
     fn setup() -> Self;
-    fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error>;
+    fn notify(msg_title: &str, msg_body: &str) -> Result<(), ErrorRepr>;
 }
 
 #[derive(Debug)]
-enum Error {
+pub struct Error(ErrorRepr);
+
+#[derive(Debug)]
+enum ErrorRepr {
     #[cfg(target_os = "linux")]
     Linux(LError),
     #[cfg(target_os = "macos")]
@@ -34,6 +37,7 @@ enum Error {
 }
 
 impl StdError for Error {}
+impl StdError for ErrorRepr {}
 
 #[cfg(target_os = "macos")]
 #[derive(Debug)]
@@ -54,13 +58,19 @@ impl Display for MacOsError {
 
 impl Display for Error {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), fmt::Error> {
+        self.0.fmt(fmt)
+    }
+}
+
+impl Display for ErrorRepr {
+    fn fmt(&self, fmt: &mut Formatter) -> Result<(), fmt::Error> {
         match self {
             #[cfg(target_os = "linux")]
-            Error::Linux(e) => write!(fmt, "{}", e),
+            ErrorRepr::Linux(e) => write!(fmt, "{}", e),
             #[cfg(target_os = "macos")]
-            Error::MacOs(e) => write!(fmt, "{}", e),
+            ErrorRepr::MacOs(e) => write!(fmt, "{}", e),
             #[cfg(target_os = "windows")]
-            Error::Windows(e) => write!(fmt, "{:?}", e),
+            ErrorRepr::Windows(e) => write!(fmt, "{:?}", e),
         }
     }
 }
@@ -73,9 +83,9 @@ impl From<ApplicationError> for MacOsError {
 }
 
 #[cfg(target_os = "macos")]
-impl From<ApplicationError> for Error {
+impl From<ApplicationError> for ErrorRepr {
     fn from(err: ApplicationError) -> Self {
-        Error::MacOs(err.into())
+        ErrorRepr::MacOs(err.into())
     }
 }
 
@@ -87,23 +97,23 @@ impl From<NotificationError> for MacOsError {
 }
 
 #[cfg(target_os = "macos")]
-impl From<NotificationError> for Error {
+impl From<NotificationError> for ErrorRepr {
     fn from(err: NotificationError) -> Self {
-        Error::MacOs(err.into())
+        ErrorRepr::MacOs(err.into())
     }
 }
 
 #[cfg(target_os = "linux")]
-impl From<LError> for Error {
+impl From<LError> for ErrorRepr {
     fn from(err: LError) -> Self {
-        Error::Linux(err)
+        ErrorRepr::Linux(err)
     }
 }
 
 #[cfg(target_os = "windows")]
-impl From<WError> for Error {
+impl From<WError> for ErrorRepr {
     fn from(err: WError) -> Self {
-        Error::Windows(err)
+        ErrorRepr::Windows(err)
     }
 }
 
@@ -116,7 +126,7 @@ impl Platform for Windows {
         Windows
     }
 
-    fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
+    fn notify(msg_title: &str, msg_body: &str) -> Result<(), ErrorRepr> {
         use winrt::windows::data::xml::dom::*;
         use winrt::windows::ui::notifications::*;
         use winrt::*;
@@ -154,7 +164,7 @@ impl Platform for MacOs {
         MacOs
     }
 
-    fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
+    fn notify(msg_title: &str, msg_body: &str) -> Result<(), ErrorRepr> {
         let bundle = mac_notification_sys::get_bundle_identifier("Script Editor").unwrap();
         mac_notification_sys::set_application(&bundle).unwrap();
         mac_notification_sys::send_notification(msg_title, &None, msg_body, &None).unwrap();
@@ -171,7 +181,7 @@ impl Platform for Linux {
         Linux
     }
 
-    fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
+    fn notify(msg_title: &str, msg_body: &str) -> Result<(), ErrorRepr> {
         notify_rust::Notification::new()
             .summary(msg_title)
             .body(msg_body)
@@ -187,8 +197,8 @@ type CurrPlatform = MacOs;
 #[cfg(target_os = "linux")]
 type CurrPlatform = Linux;
 
-pub fn notify(msg_title: &str, msg_body: &str) -> Result<(), Box<dyn StdError>> {
+pub fn notify(msg_title: &str, msg_body: &str) -> Result<(), Error> {
     CurrPlatform::setup();
-    CurrPlatform::notify(msg_title, msg_body)?;
+    CurrPlatform::notify(msg_title, msg_body).map_err(Error)?;
     Ok(())
 }
