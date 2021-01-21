@@ -1,3 +1,12 @@
+//! Small, cross-platform Rust crate for sending system notifications
+//!
+//! ## Examples
+//!
+//! ```rust
+//! notifica::notify("Hello", "World! 🌍");
+//! ```
+
+
 #[cfg(target_os = "macos")]
 extern crate mac_notification_sys;
 
