@@ -165,17 +165,22 @@ impl Platform for Windows {
 }
 
 #[cfg(target_os = "macos")]
+static APP_SET: std::sync::Once = std::sync::Once::new();
+
+#[cfg(target_os = "macos")]
 struct MacOs;
 
 #[cfg(target_os = "macos")]
 impl Platform for MacOs {
     fn setup() -> Self {
+        APP_SET.call_once(|| {
+            let bundle = mac_notification_sys::get_bundle_identifier("Script Editor").unwrap();
+            mac_notification_sys::set_application(&bundle).unwrap();
+        });
         MacOs
     }
 
     fn notify(msg_title: &str, msg_body: &str) -> Result<(), ErrorRepr> {
-        let bundle = mac_notification_sys::get_bundle_identifier("Script Editor").unwrap();
-        mac_notification_sys::set_application(&bundle).unwrap();
         mac_notification_sys::send_notification(msg_title, &None, msg_body, &None).unwrap();
         Ok(())
     }
