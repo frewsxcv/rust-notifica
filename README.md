@@ -1,5 +1,5 @@
-⚠️ This repository has moved to <https://tangled.org/rwell.org/rust-notifica> ⚠️
-
+**⚠️ This repository has moved to <https://tangled.org/rwell.org/rust-notifica> ⚠️
+**
 # rust-notifica
 
 Small, cross-platform Rust crate for sending system notifications
